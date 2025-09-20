@@ -80,28 +80,19 @@ mod webrtc {
         ];
         let mut lib_paths = vec![out_dir().join("lib")];
 
-        if let Ok(mut lib) =
-            pkg_config::Config::new().atleast_version("20240722").probe("absl_base")
-        {
-            // If abseil package is installed locally, meson would have linked it for
-            // webrtc-audio-processing-2. Use the same library for our wrapper, too.
-            include_paths.append(&mut lib.include_paths);
-            lib_paths.append(&mut lib.link_paths);
-        } else {
-            // Otherwise use the local build fetched and built by meson.
-            include_paths.push(
-                src_dir()
-                    .join("webrtc-audio-processing")
-                    .join("subprojects")
-                    .join("abseil-cpp-20240722.0"),
-            );
-            lib_paths.push(
-                out_dir()
-                    .join("webrtc-audio-processing")
-                    .join("subprojects")
-                    .join("abseil-cpp-20240722.0"),
-            );
-        }
+        // Always rely on the version compatible with the included submodule
+        include_paths.push(
+            src_dir()
+                .join("webrtc-audio-processing")
+                .join("subprojects")
+                .join("abseil-cpp-20240722.0"),
+        );
+        lib_paths.push(
+            out_dir()
+                .join("webrtc-audio-processing")
+                .join("subprojects")
+                .join("abseil-cpp-20240722.0"),
+        );
 
         Ok((include_paths, lib_paths))
     }
@@ -121,6 +112,9 @@ mod webrtc {
         let mut meson = Command::new("meson");
         let status = meson
             .args(&["setup", "--prefix", install_dir.to_str().unwrap()])
+            .arg("--wipe")
+            .arg("--wrap-mode=forcefallback")
+            .arg("-Dcpp_args=-include cstdint")
             .arg("-Ddefault_library=static")
             .arg(BUNDLED_SOURCE_PATH)
             .arg(webrtc_build_dir.to_str().unwrap())
