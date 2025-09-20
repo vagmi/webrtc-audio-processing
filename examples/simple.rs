@@ -44,7 +44,7 @@ fn main() {
 /// Generate example stereo frames that simulates a situation where the
 /// microphone (capture) would be picking up the speaker (render) output.
 fn sample_stereo_frames() -> (Vec<f32>, Vec<f32>) {
-    let num_samples_per_frame = NUM_SAMPLES_PER_FRAME as usize;
+    let num_samples_per_frame = 48000;
 
     let mut render_frame = Vec::with_capacity(num_samples_per_frame * 2);
     let mut capture_frame = Vec::with_capacity(num_samples_per_frame * 2);

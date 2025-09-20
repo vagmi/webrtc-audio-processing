@@ -66,9 +66,9 @@ AudioProcessing* audio_processing_create(
 
   const bool has_keyboard = false;
   ap->capture_stream_config = webrtc::StreamConfig(
-      SAMPLE_RATE_HZ, init_config.num_capture_channels, has_keyboard);
+      init_config.sample_rate_hz, init_config.num_capture_channels, has_keyboard);
   ap->render_stream_config = webrtc::StreamConfig(
-      SAMPLE_RATE_HZ, init_config.num_render_channels, has_keyboard);
+      init_config.sample_rate_hz, init_config.num_render_channels, has_keyboard);
 
   webrtc::ProcessingConfig pconfig = {
     ap->capture_stream_config,
